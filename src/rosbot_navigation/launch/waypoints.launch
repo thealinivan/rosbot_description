@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+
+  <master auto="start"/>
+
+  <!-- Map server -->
+  <arg name="map_file" default="$(find rosbot_navigation)/maps/test_map.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+ <!-- Localization -->
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <remap from="scan" to="/scan"/>
+    <param name="odom_frame_id" value="odom"/>
+    <param name="odom_model_type" value="diff-corrected"/>
+    <param name="base_frame_id" value="base_link"/>
+    <param name="update_min_d" value="0.1"/>
+    <param name="update_min_a" value="0.2"/>
+    <param name="min_particles" value="500"/>
+  </node>
+
+ <!-- Move base -->
+<node pkg="xsens_driver" name="waypoints" type="waypoints.py" output="screen"> 
+  <include file="$(find rosbot_navigation)/launch/waypoints.py"></include>
+</node>
+   
+
+</launch>
