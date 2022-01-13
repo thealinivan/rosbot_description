@@ -1,6 +1,6 @@
 # rosbot_description #
 
-URDF model for Gazebo integrated with ROS.
+URDF model for Gazebo integrated with ROS. RViz mapping and auto path using waypoints in a python script.
 
 ## Installation. ## 
 
