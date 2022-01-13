@@ -8,17 +8,19 @@ from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from math import pi, sqrt, atan2
 
+global spins, continueSpining
+
 WAYPOINTS = [ 
-	[1, 0], 
-	[1, -1], 
-	[2, -1], 
-	[2, -2], 
+	[0.8, 0], 
+	[0.8, -1], 
+	[1.75, -1], 
+	[1.75, -2], 
 	[-0.8, -2], 
 	[-0.8, -3], 
-	[-1.85, -3], 
-	[-1.85, 1], 
-	[-0.9, 1], 
-	[-0.9, -1], 
+	[-2, -3], 
+	[-2, 1.85], 
+	[-1, 1.85], 
+	[-1, -1], 
 	[0, -1], 
 	[0, 0] 
 ]
@@ -85,11 +87,18 @@ class turtlebot_move():
         self.trajectory = list()
 
         # track a sequence of waypoints
-        for point in WAYPOINTS:
-            self.move_to_point(point[0], point[1])
-            rospy.sleep(1)
+	spins = 0
+	continueSpining = True;
+	while continueSpining:
+            for point in WAYPOINTS:
+                self.move_to_point(point[0], point[1])
+	    spins = spins + 1
+	    rospy.logwarn(str(spins) + " out of 3 spins completed !")
+	    rospy.sleep(1)
+	    if spins >= 3:
+ 		continueSpining = False 
         self.stop()
-        rospy.logwarn("Action done.")
+        rospy.logwarn("Journey of 10 spins finished !")
 
         # plot trajectory
         data = np.array(self.trajectory)
@@ -114,8 +123,8 @@ class turtlebot_move():
         # Adjust orientation first
         while not rospy.is_shutdown():
             angular = self.pid_theta.update(self.theta)
-            if abs(angular) > 0.2:
-                angular = angular/abs(angular)*0.2
+            if abs(angular) > 2:
+                angular = angular/abs(angular)*2
             if abs(angular) < 0.01:
                 break
             self.vel.linear.x = 0
@@ -135,12 +144,12 @@ class turtlebot_move():
             diff_y = y - self.y
             vector = np.array([diff_x, diff_y])
             linear = np.dot(vector, direction_vector) # projection
-            if abs(linear) > 0.2:
-                linear = linear/abs(linear)*0.2
+            if abs(linear) > 0.4:
+                linear = linear/abs(linear)*0.4
 
             angular = self.pid_theta.update(self.theta)
-            if abs(angular) > 0.2:
-                angular = angular/abs(angular)*0.2
+            if abs(angular) > 2:
+                angular = angular/abs(angular)*2
 
             if abs(linear) < 0.01 and abs(angular) < 0.01:
                 break
