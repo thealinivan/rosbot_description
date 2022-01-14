@@ -98,7 +98,7 @@ class turtlebot_move():
 	    if spins >= 3:
  		continueSpining = False 
         self.stop()
-        rospy.logwarn("Journey of 10 spins finished !")
+        rospy.logwarn("Journey of 3 spins finished !")
 
         # plot trajectory
         data = np.array(self.trajectory)
